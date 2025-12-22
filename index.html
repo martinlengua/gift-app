@@ -1,44 +1,75 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAR Regalo</title>
-    <!-- Scripts de A-Frame y AR.js -->
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: black; /* Fondo negro para mejor experiencia AR */
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>AR Card</title>
+
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/3.4.3/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    #tap {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      z-index: 10;
+      text-align: center;
+    }
+  </style>
 </head>
-<body>
-    <!-- Escena AR -->
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;">
-        <!-- Marcador de patrón -->
-        <a-marker type="pattern" url="marker.patt" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
-            <!-- Video superpuesto: proporción 16:9, orientado horizontalmente sobre la tarjeta vertical -->
-            <!-- Tamaño optimizado: scale reducido para que quepa naturalmente en una tarjeta vertical -->
-            <a-video src="video.mp4" autoplay loop position="0 0 0" rotation="0 0 0" scale="1.2 0.675 1" width="1.2" height="0.675"></a-video>
-        </a-marker>
-        <!-- Cámara -->
-        <a-entity camera></a-entity>
-    </a-scene>
 
-    <!-- Instrucciones para el usuario (opcional, se pueden ocultar después) -->
-    <div id="instructions" style="position: absolute; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; font-family: Arial, sans-serif;">
-        Apunta la cámara al marcador impreso para ver el video en AR.
-    </div>
+<body style="margin:0; overflow:hidden;">
 
-    <script>
-        // Ocultar instrucciones después de 5 segundos
-        setTimeout(() => {
-            document.getElementById('instructions').style.display = 'none';
-        }, 5000);
-    </script>
+<div id="tap">Toca la pantalla para ver el mensaje 💙💛</div>
+
+<a-scene embedded arjs>
+
+  <a-assets>
+    <video id="vid"
+           src="video.mp4"
+           preload="auto"
+           muted
+           playsinline
+           webkit-playsinline
+           loop>
+    </video>
+  </a-assets>
+
+  <a-marker id="marker" type="pattern" url="marker.patt">
+    <a-video src="#vid"
+             width="1"
+             height="0.56"
+             position="0 0.3 0"
+             rotation="-90 0 0">
+    </a-video>
+  </a-marker>
+
+  <a-entity camera></a-entity>
+</a-scene>
+
+<script>
+  const overlay = document.getElementById('tap');
+  const video = document.getElementById('vid');
+  const marker = document.getElementById('marker');
+
+  overlay.addEventListener('click', () => {
+    video.play();          // 🔓 desbloquea Safari
+    overlay.style.display = 'none';
+  });
+
+  marker.addEventListener('markerFound', () => {
+    video.play();
+  });
+
+  marker.addEventListener('markerLost', () => {
+    video.pause();
+  });
+</script>
+
 </body>
-</html></content>
-<parameter name="filePath">/Users/martinlengua_1/proyecto_personal/gift-app/index.html
+</html>
