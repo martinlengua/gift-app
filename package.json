@@ -1,0 +1,8 @@
+{
+  "name": "gift-ar-app",
+  "version": "1.0.0",
+  "description": "WebAR gift app",
+  "scripts": {
+    "build": "echo 'No build needed for static app'"
+  }
+}
