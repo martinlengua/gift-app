@@ -1,14 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>AR Card</title>
 
+  <!-- IMPORTANTE para iOS -->
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+  <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+  <!-- AR.js (compatible con iOS) -->
   <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/3.4.3/aframe/build/aframe-ar.js"></script>
 
   <style>
-    #tap {
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    #overlay {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.85);
@@ -16,21 +29,27 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2em;
-      z-index: 10;
       text-align: center;
+      z-index: 10;
+      font-size: 1.2em;
+      padding: 20px;
     }
   </style>
 </head>
 
-<body style="margin:0; overflow:hidden;">
+<body>
 
-<div id="tap">Toca la pantalla para ver el mensaje 💙💛</div>
+<!-- OVERLAY OBLIGATORIO PARA iOS -->
+<div id="overlay">
+  Toca la pantalla…<br>
+  tengo algo que decirte 💙💛
+</div>
 
 <a-scene embedded arjs>
 
+  <!-- CARGA DE ASSETS -->
   <a-assets>
-    <video id="vid"
+    <video id="video"
            src="video.mp4"
            preload="auto"
            muted
@@ -40,36 +59,21 @@
     </video>
   </a-assets>
 
+  <!-- MARCADOR -->
   <a-marker id="marker" type="pattern" url="marker.patt">
-    <a-video src="#vid"
-             width="1"
-             height="0.56"
-             position="0 0.3 0"
-             rotation="-90 0 0">
+    <a-video
+      src="#video"
+      width="1"
+      height="0.56"
+      position="0 0.3 0"
+      rotation="-90 0 0">
     </a-video>
   </a-marker>
 
   <a-entity camera></a-entity>
 </a-scene>
 
-<script>
-  const overlay = document.getElementById('tap');
-  const video = document.getElementById('vid');
-  const marker = document.getElementById('marker');
-
-  overlay.addEventListener('click', () => {
-    video.play();          // 🔓 desbloquea Safari
-    overlay.style.display = 'none';
-  });
-
-  marker.addEventListener('markerFound', () => {
-    video.play();
-  });
-
-  marker.addEventListener('markerLost', () => {
-    video.pause();
-  });
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
