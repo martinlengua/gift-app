@@ -2,35 +2,45 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>AR Card</title>
+  <title>AR Video Marker</title>
 
-  <!-- Obligatorio para móviles -->
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <!-- A-Frame -->
+  <!-- A-Frame COMPATIBLE -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-  <!-- AR.js desde Cloudflare (MIME correcto, NO ORB) -->
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <!-- AR.js (estable) -->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: black;
+    body { margin: 0; overflow: hidden; background: black; }
+
+    #tap {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 10;
+      font-size: 1.2em;
+      padding: 20px;
     }
   </style>
 </head>
 
 <body>
 
-<a-scene embedded vr-mode-ui="enabled: false">
+<div id="tap">Toca la pantalla para ver el mensaje 💙</div>
 
-  <!-- Assets -->
-  <a-assets timeout="10000">
+<a-scene embedded arjs>
+
+  <a-assets>
     <video
-      id="video"
+      id="vid"
       src="video.mp4"
       preload="auto"
       muted
@@ -40,20 +50,40 @@
     </video>
   </a-assets>
 
-  <!-- Marcador AR -->
-  <a-marker type="pattern" url="marker.patt">
+  <a-marker id="marker" type="pattern" url="marker.patt">
     <a-video
-      src="#video"
+      src="#vid"
       width="1"
       height="0.56"
       rotation="-90 0 0">
     </a-video>
   </a-marker>
 
-  <!-- Cámara -->
   <a-entity camera></a-entity>
-
 </a-scene>
+
+<script>
+  const video = document.getElementById('vid');
+  const marker = document.getElementById('marker');
+  const overlay = document.getElementById('tap');
+
+  let unlocked = false;
+
+  overlay.addEventListener('click', () => {
+    overlay.style.display = 'none';
+    setTimeout(() => {
+      video.play().then(() => unlocked = true).catch(() => {});
+    }, 300);
+  });
+
+  marker.addEventListener('markerFound', () => {
+    if (unlocked) video.play().catch(() => {});
+  });
+
+  marker.addEventListener('markerLost', () => {
+    video.pause();
+  });
+</script>
 
 </body>
 </html>
