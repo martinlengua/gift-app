@@ -2,33 +2,28 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>AR Card</title>
+  <title>AR Video Marker</title>
 
-  <!-- Obligatorio para móviles -->
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no">
 
   <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 
-  <!-- AR.js desde Cloudflare (MIME correcto, NO ORB) -->
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <!-- AR.js (el que ya sabes que funciona) -->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: black;
-    }
+    body { margin: 0; overflow: hidden; }
   </style>
 </head>
 
 <body>
 
-<a-scene embedded vr-mode-ui="enabled: false">
+<a-scene embedded arjs>
 
-  <!-- Assets -->
-  <a-assets timeout="10000">
+  <!-- Cargar el video -->
+  <a-assets>
     <video
       id="video"
       src="video.mp4"
@@ -40,31 +35,23 @@
     </video>
   </a-assets>
 
-  <!-- Marcador AR -->
+  <!-- MARCADOR PERSONALIZADO -->
   <a-marker type="pattern" url="marker.patt">
+
+    <!-- VIDEO EN REALIDAD AUMENTADA -->
     <a-video
       src="#video"
       width="1"
       height="0.56"
       rotation="-90 0 0">
     </a-video>
+
   </a-marker>
 
   <!-- Cámara -->
   <a-entity camera></a-entity>
 
- </a-scene>
+</a-scene>
 
- <script>
-   // Logs para depuración de marcador
-   const marker = document.querySelector('a-marker');
-   marker.addEventListener('markerFound', () => {
-     console.log('Marcador detectado');
-   });
-   marker.addEventListener('markerLost', () => {
-     console.log('Marcador perdido');
-   });
- </script>
-
- </body>
- </html>
+</body>
+</html>
