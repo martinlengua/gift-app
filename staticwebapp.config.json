@@ -1,0 +1,13 @@
+{
+  "routes": [
+    {
+      "route": "/marker.patt",
+      "allowedRoles": ["anonymous"],
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-headers": "*"
+      }
+    }
+  ]
+}

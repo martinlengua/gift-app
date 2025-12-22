@@ -53,18 +53,7 @@
   <!-- Cámara -->
   <a-entity camera></a-entity>
 
- </a-scene>
+</a-scene>
 
- <script>
-   // Logs para depuración de marcador
-   const marker = document.querySelector('a-marker');
-   marker.addEventListener('markerFound', () => {
-     console.log('Marcador detectado');
-   });
-   marker.addEventListener('markerLost', () => {
-     console.log('Marcador perdido');
-   });
- </script>
-
- </body>
- </html>
+</body>
+</html>
