@@ -1,55 +1,28 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   <title>AR Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <!-- IMPORTANTE para iOS -->
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-  <!-- A-Frame -->
-  <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
-
-  <!-- AR.js (compatible con iOS) -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    #overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      z-index: 10;
-      font-size: 1.2em;
-      padding: 20px;
-    }
+    body { margin: 0; overflow: hidden; }
   </style>
 </head>
 
 <body>
 
-<!-- OVERLAY OBLIGATORIO PARA iOS -->
-<div id="overlay">
-  Toca la pantalla…<br>
-  tengo algo que decirte 💙💛
-</div>
+<a-scene
+  embedded
+  vr-mode-ui="enabled: false"
+  renderer="logarithmicDepthBuffer: true;"
+  arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
 
-<a-scene embedded arjs>
-
-  <!-- CARGA DE ASSETS -->
   <a-assets>
-    <video id="video"
+    <video id="vid"
            src="video.mp4"
            preload="auto"
            muted
@@ -59,21 +32,17 @@
     </video>
   </a-assets>
 
-  <!-- MARCADOR -->
-  <a-marker id="marker" type="pattern" url="marker.patt">
+  <a-marker type="pattern" url="marker.patt">
     <a-video
-      src="#video"
+      src="#vid"
       width="1"
       height="0.56"
-      position="0 0.3 0"
       rotation="-90 0 0">
     </a-video>
   </a-marker>
 
   <a-entity camera></a-entity>
 </a-scene>
-
-<script src="script.js"></script>
 
 </body>
 </html>
