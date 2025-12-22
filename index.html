@@ -4,16 +4,15 @@
   <meta charset="utf-8" />
   <title>AR Card</title>
 
-  <!-- MUY IMPORTANTE para móviles -->
+  <!-- Obligatorio para móviles -->
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no">
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-  <!-- AR.js desde CDN GRATUITO (NO Azure, NO Front Door) -->
-  <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.5/aframe/build/aframe-ar.min.js"
-          crossorigin="anonymous"></script>
+  <!-- AR.js desde Cloudflare (MIME correcto, NO ORB) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ar.js/3.4.5/aframe/build/aframe-ar.min.js"></script>
 
   <style>
     body {
@@ -41,7 +40,7 @@
     </video>
   </a-assets>
 
-  <!-- Marcador -->
+  <!-- Marcador AR -->
   <a-marker type="pattern" url="marker.patt">
     <a-video
       src="#video"
