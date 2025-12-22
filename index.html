@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>AR Card</title>
+  <title>AR Regalo</title>
 
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -18,31 +18,34 @@
       margin: 0;
       overflow: hidden;
       background: black;
-      font-family: system-ui, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    /* Overlay para desbloquear audio */
-    #audioTap {
+    /* Botón principal */
+    #openGift {
       position: fixed;
-      bottom: 24px;
+      bottom: 32px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0,0,0,0.8);
+      background: linear-gradient(135deg, #111, #333);
       color: white;
-      padding: 12px 20px;
-      border-radius: 24px;
-      font-size: 14px;
+      padding: 16px 28px;
+      border-radius: 32px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
       z-index: 10;
       cursor: pointer;
       user-select: none;
+      display: none;
     }
   </style>
 </head>
 
 <body>
 
-<!-- Overlay audio -->
-<div id="audioTap">🔊 Toca para escuchar</div>
+<!-- Botón ABRIR REGALO -->
+<div id="openGift">🎁 ABRIR REGALO</div>
 
 <a-scene embedded arjs>
 
@@ -60,7 +63,7 @@
 
   <a-marker id="marker" type="pattern" url="marker.patt">
 
-    <!-- Video como textura (más estable que a-video) -->
+    <!-- Video como textura (estable) -->
     <a-plane
       material="shader: flat; src: #vid"
       width="1"
@@ -75,14 +78,36 @@
 
 <script>
   const video = document.getElementById('vid');
-  const tap = document.getElementById('audioTap');
+  const marker = document.getElementById('marker');
+  const openGift = document.getElementById('openGift');
 
-  // Desbloquea audio (obligatorio en móviles)
-  tap.addEventListener('click', () => {
+  let unlocked = false;
+
+  // Mostrar botón cuando el marcador aparece
+  marker.addEventListener('markerFound', () => {
+    if (!unlocked) {
+      openGift.style.display = 'block';
+    }
+  });
+
+  // Ocultar si se pierde el marcador
+  marker.addEventListener('markerLost', () => {
+    if (!unlocked) {
+      openGift.style.display = 'none';
+    }
+  });
+
+  // ABRIR REGALO = desbloquear audio + reproducir video
+  openGift.addEventListener('click', () => {
     video.muted = false;
     video.volume = 1.0;
-    video.play().catch(() => {});
-    tap.style.display = 'none';
+
+    video.play()
+      .then(() => {
+        unlocked = true;
+        openGift.style.display = 'none';
+      })
+      .catch(() => {});
   });
 </script>
 
