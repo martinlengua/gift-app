@@ -2,39 +2,47 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>AR Video Marker</title>
+  <title>AR Card</title>
 
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <!-- A-Frame COMPATIBLE -->
+  <!-- A-Frame compatible con AR.js -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-  <!-- AR.js (estable) -->
+  <!-- AR.js estable -->
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
 
   <style>
-    body { margin: 0; overflow: hidden; background: black; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      font-family: system-ui, sans-serif;
+    }
 
-    #tap {
+    /* Overlay para desbloquear audio */
+    #audioTap {
       position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
       color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+      padding: 12px 20px;
+      border-radius: 24px;
+      font-size: 14px;
       z-index: 10;
-      font-size: 1.2em;
-      padding: 20px;
+      cursor: pointer;
+      user-select: none;
     }
   </style>
 </head>
 
 <body>
 
-<div id="tap">Toca la pantalla para ver el mensaje 💙</div>
+<!-- Overlay audio -->
+<div id="audioTap">🔊 Toca para escuchar</div>
 
 <a-scene embedded arjs>
 
@@ -51,12 +59,15 @@
   </a-assets>
 
   <a-marker id="marker" type="pattern" url="marker.patt">
-    <a-video
-      src="#vid"
+
+    <!-- Video como textura (más estable que a-video) -->
+    <a-plane
+      material="shader: flat; src: #vid"
       width="1"
       height="0.56"
       rotation="-90 0 0">
-    </a-video>
+    </a-plane>
+
   </a-marker>
 
   <a-entity camera></a-entity>
@@ -64,24 +75,14 @@
 
 <script>
   const video = document.getElementById('vid');
-  const marker = document.getElementById('marker');
-  const overlay = document.getElementById('tap');
+  const tap = document.getElementById('audioTap');
 
-  let unlocked = false;
-
-  overlay.addEventListener('click', () => {
-    overlay.style.display = 'none';
-    setTimeout(() => {
-      video.play().then(() => unlocked = true).catch(() => {});
-    }, 300);
-  });
-
-  marker.addEventListener('markerFound', () => {
-    if (unlocked) video.play().catch(() => {});
-  });
-
-  marker.addEventListener('markerLost', () => {
-    video.pause();
+  // Desbloquea audio (obligatorio en móviles)
+  tap.addEventListener('click', () => {
+    video.muted = false;
+    video.volume = 1.0;
+    video.play().catch(() => {});
+    tap.style.display = 'none';
   });
 </script>
 
