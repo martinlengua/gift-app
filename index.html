@@ -10,19 +10,40 @@
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 
-  <!-- AR.js (el que ya sabes que funciona) -->
+  <!-- AR.js (el que ya comprobaste que funciona) -->
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
 
   <style>
-    body { margin: 0; overflow: hidden; }
+    body { margin: 0; overflow: hidden; background: black; }
+
+    /* Overlay para iPhone (desbloquea autoplay) */
+    #tap {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 10;
+      font-size: 1.2em;
+      padding: 20px;
+      cursor: pointer;
+    }
   </style>
 </head>
 
 <body>
 
+<!-- Overlay obligatorio en iOS -->
+<div id="tap">
+  Toca la pantalla para ver el mensaje 💙
+</div>
+
 <a-scene embedded arjs>
 
-  <!-- Cargar el video -->
+  <!-- Assets -->
   <a-assets>
     <video
       id="video"
@@ -35,10 +56,12 @@
     </video>
   </a-assets>
 
-  <!-- MARCADOR PERSONALIZADO -->
-  <a-marker type="pattern" url="marker.patt">
+  <!-- Marcador -->
+  <a-marker
+    id="marker"
+    type="pattern"
+    url="marker.patt">
 
-    <!-- VIDEO EN REALIDAD AUMENTADA -->
     <a-video
       src="#video"
       width="1"
@@ -48,10 +71,40 @@
 
   </a-marker>
 
-  <!-- Cámara -->
   <a-entity camera></a-entity>
-
 </a-scene>
+
+<!-- JS CRÍTICO -->
+<script>
+  const video = document.getElementById('video');
+  const marker = document.getElementById('marker');
+  const overlay = document.getElementById('tap');
+
+  let unlocked = false;
+
+  // 1️⃣ Gesto del usuario (iPhone)
+  overlay.addEventListener('click', () => {
+    overlay.style.display = 'none';
+
+    setTimeout(() => {
+      video.play()
+        .then(() => unlocked = true)
+        .catch(() => {});
+    }, 300);
+  });
+
+  // 2️⃣ Cuando el marcador aparece
+  marker.addEventListener('markerFound', () => {
+    if (unlocked) {
+      video.play().catch(() => {});
+    }
+  });
+
+  // 3️⃣ Cuando el marcador se pierde
+  marker.addEventListener('markerLost', () => {
+    video.pause();
+  });
+</script>
 
 </body>
 </html>
