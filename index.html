@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>AR Card</title>
 
+  <!-- MUY IMPORTANTE para móviles -->
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no">
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-  <!-- AR.js (CDN estable) -->
-  <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
+  <!-- AR.js desde CDN GRATUITO (NO Azure, NO Front Door) -->
+  <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.5/aframe/build/aframe-ar.min.js"
+          crossorigin="anonymous"></script>
 
   <style>
-    body { margin: 0; overflow: hidden; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
   </style>
 </head>
 
@@ -22,27 +28,32 @@
 
 <a-scene embedded vr-mode-ui="enabled: false">
 
+  <!-- Assets -->
   <a-assets timeout="10000">
-    <video id="vid"
-           src="video.mp4"
-           preload="auto"
-           muted
-           playsinline
-           webkit-playsinline
-           loop>
+    <video
+      id="video"
+      src="video.mp4"
+      preload="auto"
+      muted
+      playsinline
+      webkit-playsinline
+      loop>
     </video>
   </a-assets>
 
+  <!-- Marcador -->
   <a-marker type="pattern" url="marker.patt">
     <a-video
-      src="#vid"
+      src="#video"
       width="1"
       height="0.56"
       rotation="-90 0 0">
     </a-video>
   </a-marker>
 
+  <!-- Cámara -->
   <a-entity camera></a-entity>
+
 </a-scene>
 
 </body>
