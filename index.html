@@ -7,10 +7,10 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <!-- A-Frame compatible con AR.js -->
+  <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-  <!-- AR.js estable -->
+  <!-- AR.js -->
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
 
   <style>
@@ -21,7 +21,7 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    /* Botón principal */
+    /* Botón */
     #openGift {
       position: fixed;
       bottom: 32px;
@@ -34,38 +34,48 @@
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.5px;
-      z-index: 10;
+      z-index: 1000;
       cursor: pointer;
       user-select: none;
       display: none;
+    }
+
+    /* Video fullscreen */
+    #giftVideo {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      z-index: 2000;
+      object-fit: contain;
     }
   </style>
 </head>
 
 <body>
 
-<!-- Botón ABRIR REGALO -->
+<!-- Botón -->
 <div id="openGift">🎁 ABRIR REGALO</div>
 
-<a-scene embedded arjs>
+<!-- Video HTML NORMAL -->
+<video
+  id="giftVideo"
+  src="https://ststrategiaapp.blob.core.windows.net/test/video.mp4"
+  playsinline
+  webkit-playsinline
+  controls>
+</video>
 
-  <a-assets>
-    <video
-      id="vid"
-      src="https://ststrategiaapp.blob.core.windows.net/test/video.mp4"
-      preload="auto"
-      muted
-      playsinline
-      webkit-playsinline
-      loop>
-    </video>
-  </a-assets>
-
+<!-- ESCENA AR -->
+<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+  
   <a-marker id="marker" type="pattern" url="marker.patt">
-
-    <!-- Video como textura (estable) -->
+    
+    <!-- Imagen preview (NO video) -->
     <a-plane
-      material="shader: flat; src: #vid"
+      src="preview.png"
       width="1"
       height="0.56"
       rotation="-90 0 0">
@@ -77,37 +87,39 @@
 </a-scene>
 
 <script>
-  const video = document.getElementById('vid');
   const marker = document.getElementById('marker');
   const openGift = document.getElementById('openGift');
+  const video = document.getElementById('giftVideo');
 
   let unlocked = false;
 
-  // Mostrar botón cuando el marcador aparece
+  // Mostrar botón al detectar el marker
   marker.addEventListener('markerFound', () => {
     if (!unlocked) {
       openGift.style.display = 'block';
     }
   });
 
-  // Ocultar si se pierde el marcador
+  // Ocultar botón si se pierde el marker
   marker.addEventListener('markerLost', () => {
     if (!unlocked) {
       openGift.style.display = 'none';
     }
   });
 
-  // ABRIR REGALO = desbloquear audio + reproducir video
+  // Abrir regalo
   openGift.addEventListener('click', () => {
-    video.muted = false;
-    video.volume = 1.0;
+    unlocked = true;
+    openGift.style.display = 'none';
 
-    video.play()
-      .then(() => {
-        unlocked = true;
-        openGift.style.display = 'none';
-      })
-      .catch(() => {});
+    video.style.display = 'block';
+    video.play().catch(() => {});
+  });
+
+  // Opcional: cerrar video al terminar
+  video.addEventListener('ended', () => {
+    video.style.display = 'none';
+    unlocked = false;
   });
 </script>
 
