@@ -21,6 +21,24 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
+    /* Mensaje superior */
+    #scanHint {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.65);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 1000;
+      pointer-events: none;
+      text-align: center;
+      backdrop-filter: blur(6px);
+    }
+
     /* Botón */
     #openGift {
       position: fixed;
@@ -52,7 +70,7 @@
       object-fit: contain;
     }
 
-    /* Modal contraseña (IMPORTANTE: solo display:none) */
+    /* Modal contraseña */
     #passwordModal {
       display: none;
       position: fixed;
@@ -108,6 +126,9 @@
 
 <body>
 
+<!-- Mensaje superior -->
+<div id="scanHint">📷 ESCANEA EL QR QUE DICE “PARA TI”</div>
+
 <!-- Botón -->
 <div id="openGift">🎁 Наважишся відкрити це? 😅</div>
 
@@ -155,6 +176,7 @@
 
   const marker = document.getElementById('marker');
   const openGift = document.getElementById('openGift');
+  const scanHint = document.getElementById('scanHint');
   const video = document.getElementById('giftVideo');
 
   const passwordModal = document.getElementById('passwordModal');
@@ -165,16 +187,21 @@
 
   let unlocked = false;
 
-  // Mostrar botón solo con marker
+  // Marker detectado
   marker.addEventListener('markerFound', () => {
+    scanHint.style.display = 'none';
     if (!unlocked) openGift.style.display = 'block';
   });
 
+  // Marker perdido
   marker.addEventListener('markerLost', () => {
-    if (!unlocked) openGift.style.display = 'none';
+    if (!unlocked) {
+      openGift.style.display = 'none';
+      scanHint.style.display = 'block';
+    }
   });
 
-  // Click en botón → recién pide contraseña
+  // Click botón → pedir contraseña
   openGift.addEventListener('click', () => {
     passwordModal.style.display = 'flex';
     passwordInput.value = '';
@@ -197,22 +224,20 @@
 
   passwordSubmit.addEventListener('click', tryUnlock);
 
-  // Enter para enviar
   passwordInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') tryUnlock();
   });
 
-  // Cerrar modal si clickeas fuera
   passwordModal.addEventListener('click', (e) => {
     if (!passwordBox.contains(e.target)) {
       passwordModal.style.display = 'none';
     }
   });
 
-  // Al terminar el video
   video.addEventListener('ended', () => {
     video.style.display = 'none';
     unlocked = false;
+    scanHint.style.display = 'block';
   });
 </script>
 
