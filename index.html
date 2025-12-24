@@ -51,6 +51,54 @@
       z-index: 2000;
       object-fit: contain;
     }
+
+    /* Modal contraseña */
+    #passwordModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #passwordBox {
+      background: #111;
+      padding: 24px;
+      border-radius: 16px;
+      width: 280px;
+      text-align: center;
+      color: white;
+    }
+
+    #passwordBox input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+
+    #passwordBox button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #444;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #passwordError {
+      display: none;
+      margin-top: 10px;
+      color: #ff6b6b;
+      font-size: 14px;
+    }
   </style>
 </head>
 
@@ -59,7 +107,23 @@
 <!-- Botón -->
 <div id="openGift">🎁 Наважишся відкрити це? 😅</div>
 
-<!-- Video HTML NORMAL -->
+<!-- Modal contraseña -->
+<div id="passwordModal">
+  <div id="passwordBox">
+    <p>🔒 Введи пароль</p>
+
+    <input
+      id="passwordInput"
+      type="password"
+      placeholder="Пароль" />
+
+    <button id="passwordSubmit">Відкрити</button>
+
+    <p id="passwordError">Неправильний пароль</p>
+  </div>
+</div>
+
+<!-- Video HTML -->
 <video
   id="giftVideo"
   src="https://ststrategiaapp.blob.core.windows.net/test/video.mp4"
@@ -73,7 +137,6 @@
   
   <a-marker id="marker" type="pattern" url="marker.patt">
     
-    <!-- Imagen preview (NO video) -->
     <a-plane
       src="preview.png"
       width="1"
@@ -87,36 +150,55 @@
 </a-scene>
 
 <script>
+  const PASSWORD = "kulykova";
+
   const marker = document.getElementById('marker');
   const openGift = document.getElementById('openGift');
   const video = document.getElementById('giftVideo');
 
+  const passwordModal = document.getElementById('passwordModal');
+  const passwordInput = document.getElementById('passwordInput');
+  const passwordSubmit = document.getElementById('passwordSubmit');
+  const passwordError = document.getElementById('passwordError');
+
   let unlocked = false;
 
-  // Mostrar botón al detectar el marker
+  // Mostrar botón al detectar marker
   marker.addEventListener('markerFound', () => {
     if (!unlocked) {
       openGift.style.display = 'block';
     }
   });
 
-  // Ocultar botón si se pierde el marker
   marker.addEventListener('markerLost', () => {
     if (!unlocked) {
       openGift.style.display = 'none';
     }
   });
 
-  // Abrir regalo
+  // Click en ABRIR REGALO → pedir contraseña
   openGift.addEventListener('click', () => {
-    unlocked = true;
-    openGift.style.display = 'none';
-
-    video.style.display = 'block';
-    video.play().catch(() => {});
+    passwordModal.style.display = 'flex';
+    passwordInput.value = '';
+    passwordError.style.display = 'none';
+    passwordInput.focus();
   });
 
-  // Opcional: cerrar video al terminar
+  // Validar contraseña
+  passwordSubmit.addEventListener('click', () => {
+    if (passwordInput.value === PASSWORD) {
+      unlocked = true;
+      passwordModal.style.display = 'none';
+      openGift.style.display = 'none';
+
+      video.style.display = 'block';
+      video.play().catch(() => {});
+    } else {
+      passwordError.style.display = 'block';
+    }
+  });
+
+  // Al terminar el video
   video.addEventListener('ended', () => {
     video.style.display = 'none';
     unlocked = false;
