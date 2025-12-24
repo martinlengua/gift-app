@@ -52,14 +52,13 @@
       object-fit: contain;
     }
 
-    /* Modal contraseña */
+    /* Modal contraseña (IMPORTANTE: solo display:none) */
     #passwordModal {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.85);
       z-index: 1500;
-      display: flex;
       align-items: center;
       justify-content: center;
     }
@@ -73,6 +72,10 @@
       color: white;
     }
 
+    #passwordBox p {
+      margin: 0 0 12px 0;
+    }
+
     #passwordBox input {
       width: 100%;
       padding: 10px;
@@ -80,6 +83,7 @@
       border: none;
       margin-bottom: 12px;
       font-size: 16px;
+      box-sizing: border-box;
     }
 
     #passwordBox button {
@@ -134,16 +138,13 @@
 
 <!-- ESCENA AR -->
 <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-  
   <a-marker id="marker" type="pattern" url="marker.patt">
-    
     <a-plane
       src="preview.png"
       width="1"
       height="0.56"
       rotation="-90 0 0">
     </a-plane>
-
   </a-marker>
 
   <a-entity camera></a-entity>
@@ -157,26 +158,23 @@
   const video = document.getElementById('giftVideo');
 
   const passwordModal = document.getElementById('passwordModal');
+  const passwordBox = document.getElementById('passwordBox');
   const passwordInput = document.getElementById('passwordInput');
   const passwordSubmit = document.getElementById('passwordSubmit');
   const passwordError = document.getElementById('passwordError');
 
   let unlocked = false;
 
-  // Mostrar botón al detectar marker
+  // Mostrar botón solo con marker
   marker.addEventListener('markerFound', () => {
-    if (!unlocked) {
-      openGift.style.display = 'block';
-    }
+    if (!unlocked) openGift.style.display = 'block';
   });
 
   marker.addEventListener('markerLost', () => {
-    if (!unlocked) {
-      openGift.style.display = 'none';
-    }
+    if (!unlocked) openGift.style.display = 'none';
   });
 
-  // Click en ABRIR REGALO → pedir contraseña
+  // Click en botón → recién pide contraseña
   openGift.addEventListener('click', () => {
     passwordModal.style.display = 'flex';
     passwordInput.value = '';
@@ -184,8 +182,7 @@
     passwordInput.focus();
   });
 
-  // Validar contraseña
-  passwordSubmit.addEventListener('click', () => {
+  function tryUnlock() {
     if (passwordInput.value === PASSWORD) {
       unlocked = true;
       passwordModal.style.display = 'none';
@@ -195,6 +192,20 @@
       video.play().catch(() => {});
     } else {
       passwordError.style.display = 'block';
+    }
+  }
+
+  passwordSubmit.addEventListener('click', tryUnlock);
+
+  // Enter para enviar
+  passwordInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') tryUnlock();
+  });
+
+  // Cerrar modal si clickeas fuera
+  passwordModal.addEventListener('click', (e) => {
+    if (!passwordBox.contains(e.target)) {
+      passwordModal.style.display = 'none';
     }
   });
 
